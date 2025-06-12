@@ -110,7 +110,7 @@ const loadVideo = async () => {
     // 构建视频分片URL数组
     const fileUrls = Array.from(
       { length: totalChunks },
-      (_, i) => `/src/assets/rank_helper_vlog.mp4.part${i + 1}`
+      (_, i) => `/chunks/rank_helper_vlog.mp4.part${i + 1}`
     );
 
     // 并行下载所有分片
