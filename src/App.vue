@@ -9,6 +9,7 @@ const isDownloading = ref(false);
 const downloadProgress = ref(0);
 const downloadError = ref("");
 const totalChunks = 9; // 总的分片数
+const downloadComplete = ref(false); // 添加下载完成状态
 
 const isVideoLoading = ref(false);
 const videoProgress = ref(0);
@@ -17,11 +18,12 @@ const videoUrl = ref("");
 
 const downloadButtonText = computed(() => {
   if (downloadError.value) return "重试下载";
+  if (downloadComplete.value) return "下载完成";
   return isDownloading.value ? "下载中..." : "立即下载";
 });
 
 const startDownload = async () => {
-  if (isDownloading.value) return;
+  if (isDownloading.value || downloadComplete.value) return;
 
   isDownloading.value = true;
   downloadProgress.value = 0;
@@ -91,6 +93,7 @@ const startDownload = async () => {
     URL.revokeObjectURL(url);
 
     console.log("下载完成");
+    downloadComplete.value = true; // 设置下载完成状态
   } catch (error) {
     console.error("下载失败:", error);
     downloadError.value = error.message;
@@ -193,7 +196,7 @@ loadVideo();
           <button
             class="download-btn primary-btn"
             @click="startDownload"
-            :disabled="isDownloading"
+            :disabled="isDownloading || downloadComplete"
           >
             {{ downloadButtonText }}
           </button>
@@ -525,6 +528,12 @@ main {
 .download-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  background-color: #ccc;
+}
+
+.download-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .progress-container {
